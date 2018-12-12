@@ -1,8 +1,10 @@
+require('dotenv').config('');
+
 const config = {
-    server: {
-        hostname: '127.0.0.1',
-        port: 3000,
-    },
+  server: {
+    hostname: process.env.SERVER_HOSTNAME,
+    port: process.env.SERVER_PORT,
+  },
 };
 
 module.exports = config;
