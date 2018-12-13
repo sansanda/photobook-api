@@ -10,7 +10,11 @@ exports.all = (req, res, next) => {
     Model.find().exec()
     .then((docs) => {
         logger.info('Retreiving all posts from database!!!');
-        res.json(docs);
+        res.status(200);
+        res.json({
+            success: true,
+            items: docs,
+        });
     })
     .catch((err) => {
         logger.info('Error getting all the posts from the database!!! --> ' + err);
@@ -26,7 +30,11 @@ exports.create = (req, res, next) => {
 
     document.save()
     .then((doc) => {
-        res.json(doc);
+        res.status(201);
+        res.json({
+            success: true,
+            item: doc,
+        });
     })
     .catch((err) => {
         logger.info('Error saving the post in the database!!! --> ' + err);
@@ -43,7 +51,10 @@ exports.create = (req, res, next) => {
 //ubicado en routes, que a su vez invoca a la funcion --> controller.id
 exports.read = (req, res, next) => {
     const { doc } = req;
-    res.json(doc);
+    res.json({
+        success: true,
+        item: doc,
+    });
 };
 
 //UPDATE ONE POST
@@ -55,7 +66,10 @@ exports.update = (req, res, next) => {
 
     doc.save()
     .then((updated) => {
-        res.json(updated);
+        res.json({
+            success: true,
+            item: updated,
+        });
     })
     .catch((err) => {
         next(new Error(err));
@@ -68,7 +82,10 @@ exports.delete = (req, res, next) => {
 
     doc.remove()
     .then((removed) => {
-        res.json(removed);
+        res.json({
+            success: true,
+            item: removed,
+        });
     })
     .catch((err) => {
         next(new Error(err));
@@ -87,6 +104,7 @@ exports.id = (req, res, next, id) => {
           const message = `${Model.modelName} not found`;
           logger.info(message);
           res.json({
+            success: false,
             message,
           });
         }
