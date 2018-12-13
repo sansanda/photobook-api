@@ -6,4 +6,4 @@ const post = {
     description: String,
 };
 
-module.exports = mongoose.model('postModel', post);
+module.exports = mongoose.model('post', post);
