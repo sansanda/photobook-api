@@ -21,18 +21,24 @@ app.use('/api/v1', apiRouter);
 
 // Handle middleware errors
 app.use((req, res, next) => {
-  logger.info('Route not found');
-  res.status(404);
+  const {statusCode = 404, message = 'Resource not found'} = null;
+  logger.info(message);
+  res.status(statusCode);
   res.json({
-    error: 'Route not found',
+    error: true,
+    statusCode: statusCode,
+    message: message,
   });
 });
 
 app.use((err, req, res, next) => {
-  logger.error(`Error: ${err}`);
-  res.status(500);
+  const {statusCode = 500, message} = err;
+  logger.error(`Error Message: ${message}`);
+  res.status(statusCode);
   res.json({
-    error: `${err}`,
+    error: true,
+    statusCode: statusCode,
+    message: message,
   });
 });
 
