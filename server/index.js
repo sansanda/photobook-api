@@ -1,19 +1,16 @@
 const express = require('express');
 const morgan = require('morgan');
 const logger = require('winston');
+const apiRouter = require('./api/v1/index');
 
 const app = express();
 
 // Setup middleware
 app.use(morgan('common'));
 
-// Routes
-app.get('/', (req, res, next) => {
-  logger.info('API root');
-  res.json({
-    message: 'Welcome to the API',
-  });
-});
+// Setup router and routes
+app.use('/api', apiRouter);
+app.use('/api/v1', apiRouter);
 
 // Handle middleware errors
 app.use((req, res, next) => {
