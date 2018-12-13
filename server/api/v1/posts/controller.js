@@ -1,18 +1,36 @@
+const Model = require("./model");
+const logger = require('winston');
+
 //CRUD 
 
 //ALL POSTS
 
 //GET ALL
 exports.all = (req, res, next) => {
-    res.json(
-        [{ "_id": 1, "title": "Vacation" },
-        { "_id": 2, "title": "Jogging" }]
-    );
+    Model.find().exec()
+    .then((docs) => {
+        res.json(docs);
+    })
+    .catch((err) => {
+        logger.info('Error getting all the posts from the database!!! --> ' + err);
+        next(new Error(err));
+    });
 };
 
 //CREATE POSTS
 exports.create = (req, res, next) => {
-    res.json({});
+    const { body } = req;
+
+    const document = new Model(body);
+
+    document.save()
+    .then((doc) => {
+        res.json(doc);
+    })
+    .catch((err) => {
+        logger.info('Error saving the post in the database!!! --> ' + err);
+        next(new Error(err));
+    });
 };
 
 
