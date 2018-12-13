@@ -2,7 +2,14 @@ const express = require('express');
 const morgan = require('morgan');
 const logger = require('winston');
 const apiRouter = require('./api/v1/index');
+const database = require('./database');
+const bodyParser = require('body-parser');
 
+
+// Connect to database
+database.connect();
+
+// Initialize Express app
 const app = express();
 
 // Setup middleware
