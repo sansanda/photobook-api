@@ -1,13 +1,6 @@
 const router = require('express').Router();
-const logger = require('winston');
+const posts = require('./posts/routes');
 
-router.route('/posts')
- .get((req, res, next) => {
-    logger.info('GET all posts');
-    res.json({
-      message: 'GET all posts'
-    });
-});
-
+router.use('/posts', posts);
 
 module.exports = router;
