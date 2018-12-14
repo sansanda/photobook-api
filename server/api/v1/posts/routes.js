@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const logger = require('winston');
 const controller = require('./controller');
+const bodyParser = require('body-parser');
+router.use(bodyParser.json());
 
 /*
  * /api/posts/     POST   - CREATE
