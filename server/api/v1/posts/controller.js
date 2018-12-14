@@ -1,8 +1,10 @@
-const Model = require("./model");
+const postModel = require("./model");
 const logger = require('winston');
 const config = require('./../../../config');
 const { pagination } = config;
 const parsePaginationParams = require("../../../utils/index");
+
+
 //CRUD 
 
 //ALL POSTS
@@ -13,8 +15,8 @@ exports.all = (req, res, next) => {
   const { query = {} } = req;
   const { limit, page, skip } = parsePaginationParams(query);
 
-  const all = Model.find().limit(limit).skip(skip);
-  const count = Model.count();
+  const all = postModel.find().limit(limit).skip(skip);
+  const count = postModel.count();
   
     Promise.all([all.exec(), count.exec()])
       .then((data) => {
@@ -44,7 +46,7 @@ exports.all = (req, res, next) => {
 exports.create = (req, res, next) => {
     const { body } = req;
 
-    const document = new Model(body);
+    const document = new postModel(body);
 
     document.save()
     .then((doc) => {
@@ -112,14 +114,14 @@ exports.delete = (req, res, next) => {
 
 //Id function
 exports.id = (req, res, next, id) => {
-    Model.findById(id).exec()
+    postModel.findById(id).exec()
       .then((doc) => {
         if (doc) {
           req.doc = doc;
           //Pasamos el control al siguiente middleware (en routes)
           next();
         } else {
-          const message = `${Model.modelName} not found`;
+          const message = `${postModel.modelName} not found`;
           logger.info(message);
           res.json({
             success: false,
