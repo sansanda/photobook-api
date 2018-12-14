@@ -22,5 +22,8 @@ const fields = {
 const post = new Schema(fields, {
   timestamps: true,
 });
-var postModel = mongoose.model('post', post);
-module.exports = postModel;
+
+module.exports = {
+    postModel: mongoose.model('post', post),
+    fields,
+  };
