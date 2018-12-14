@@ -1,26 +1,44 @@
 const Model = require("./model");
 const logger = require('winston');
-
+const config = require('./../../../config');
+const { pagination } = config;
+const parsePaginationParams = require("../../../utils/index");
 //CRUD 
 
 //ALL POSTS
 
 //GET ALL
 exports.all = (req, res, next) => {
-    Model.find().exec()
-    .then((docs) => {
+
+  const { query = {} } = req;
+  const { limit, page, skip } = parsePaginationParams(query);
+
+  const all = Model.find().limit(limit).skip(skip);
+  const count = Model.count();
+  
+    Promise.all([all.exec(), count.exec()])
+      .then((data) => {
         logger.info('Retreiving all posts from database!!!');
-        res.status(200);
+        const [docs, total] = data;
+        const pages = Math.ceil(total / limit);
+  
         res.json({
-            success: true,
-            items: docs,
+          success: true,
+          items: docs,
+          meta: {
+            limit,
+            skip,
+            total,
+            page,
+            pages,
+          },
         });
-    })
-    .catch((err) => {
+      })
+      .catch((err) => {
         logger.info('Error getting all the posts from the database!!! --> ' + err);
         next(new Error(err));
-    });
-};
+      });
+  };
 
 //CREATE POSTS
 exports.create = (req, res, next) => {
