@@ -1,8 +1,17 @@
-const Model = require("./model");
 const logger = require('winston');
 const config = require('./../../../config');
 const { pagination } = config;
-const parsePaginationParams = require("../../../utils/index");
+const {
+    parsePaginationParams, 
+    parseSortParams, 
+    compactSortToStr, 
+} = require("../../../utils/index");
+
+const {
+    postModel,
+    fields  ,
+  } = require('./model');
+
 //CRUD 
 
 //ALL POSTS
@@ -12,39 +21,49 @@ exports.all = (req, res, next) => {
 
   const { query = {} } = req;
   const { limit, page, skip } = parsePaginationParams(query);
+  const {
+    sortBy,
+    direction,
+  } = parseSortParams(query, fields);
 
-  const all = Model.find().limit(limit).skip(skip);
-  const count = Model.count();
+  const all = postModel
+    .find()
+    .sort(compactSortToStr(sortBy, direction))
+    .limit(limit)
+    .skip(skip);
+  const count = postModel.count();
+
   
     Promise.all([all.exec(), count.exec()])
-      .then((data) => {
-        logger.info('Retreiving all posts from database!!!');
-        const [docs, total] = data;
-        const pages = Math.ceil(total / limit);
-  
-        res.json({
-          success: true,
-          items: docs,
-          meta: {
-            limit,
-            skip,
-            total,
-            page,
-            pages,
-          },
-        });
-      })
-      .catch((err) => {
-        logger.info('Error getting all the posts from the database!!! --> ' + err);
-        next(new Error(err));
+    .then((data) => {
+      const [docs, total] = data;
+      const pages = Math.ceil(total / limit);
+
+      res.json({
+        success: true,
+        items: docs,
+        meta: {
+          limit,
+          skip,
+          total,
+          page,
+          pages,
+          sortBy,
+          direction,
+        },
       });
+    })
+    .catch((err) => {
+      next(new Error(err));
+    });
+    
   };
 
 //CREATE POSTS
 exports.create = (req, res, next) => {
     const { body } = req;
 
-    const document = new Model(body);
+    const document = new postModel(body);
 
     document.save()
     .then((doc) => {
