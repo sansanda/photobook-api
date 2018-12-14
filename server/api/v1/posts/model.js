@@ -1,9 +1,26 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const post = {
-    location: String,
-    photo_url: String,
-    description: String,
+const { Schema } = mongoose;
+
+const fields = {
+  location: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  photo_url: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    default: '',
+    trim: true
+  },
 };
 
-module.exports = mongoose.model('post', post);
+const post = new Schema(fields, {
+  timestamps: true,
+});
+var postModel = mongoose.model('post', post);
+module.exports = postModel;

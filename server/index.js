@@ -32,13 +32,24 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  const {statusCode = 500, message} = err;
-  logger.error(`Error Message: ${message}`);
+  let {
+    statusCode = 500,
+  } = err;
+  const {
+    message,
+  } = err;
+
+  // Validation Errors
+  if (err.message.startsWith('ValidationError')) {
+    statusCode = 422;
+  }
+
+  logger.error(`Error: ${message}`);
   res.status(statusCode);
   res.json({
     error: true,
-    statusCode: statusCode,
-    message: message,
+    statusCode,
+    message,
   });
 });
 
